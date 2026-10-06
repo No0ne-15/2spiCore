@@ -9,9 +9,9 @@
 // @updateURL    https://github.com/No0ne-15/2spiCore/raw/refs/heads/main/2spiCore.user.js
 // @grant        none
 // ==/UserScript==
+
 (function () {
     'use strict';
-    const VERSION = "1.0.0"
 
     const raritiesVariables = {
         "var(--color-SSS)": "ethereal",
@@ -34,7 +34,41 @@
         mythic: Number(localStorage.getItem("mythicDrops")) || 0,
     };
 
-    const rarityList = ["common", "uncommon", "rare", "epic", "legendary", "mythic"];
+    const rarityList = [
+        "common", 
+        "uncommon", 
+        "rare", 
+        "epic", 
+        "legendary", 
+        "mythic"
+    ];
+
+    const npcStatsDisplayConfig = {
+        common: {
+            name: "Common",
+            color: "#9DA6B3" 
+        },
+        uncommon: {
+            name: "Uncommon",
+            color: "#98BE2E" 
+        },
+        rare: {
+            name: "Rare",
+            color: "#0092ED" 
+        },
+        epic: {
+            name: "Epic",
+            color: "#C92F7A"
+        },
+        legendary: {
+            name: "Legendary",
+            color: "#F49824"
+        },
+        mythic: {
+            name: "Mythic",
+            color: "#4ED0FF"
+        },
+    };
 
     const rates = {};
     rarityList.forEach(r => {
@@ -113,6 +147,22 @@
         observer.observe(observerTarget, { characterData: true, subtree: true, childList: true });
     }
 
+    // Create HTML display for each NPC rarity drops.
+    function insertNpcRateRows() {
+        return rarityList.map(r => {
+            const rarity = npcStatsDisplayConfig[r];
+            return `
+                <div style="width: 0.750rem; height: 0.750rem; border-radius: 50%; background: ${rarity.color}; flex-shrink: 0;"></div>
+                <span style="font-size: 1.25rem; font-weight: 600; color: white; text-align: left">${rarity.name}</span>
+                <div style="position: relative; height: 0.5rem; width: 8rem; background: #2e2e2e; border-radius: 3px; overflow: hidden;">
+                    <div id="${r}Bar" style="position: absolute; left: 0; top: 0; height: 100%; width: ${rates[r]}%; background: ${rarity.color};"></div>
+                </div>
+                <span style="font-size: 1.25rem; font-weight: 600; text-align: right;"><span id="${r}Rate">${rates[r]}</span>%</span>
+                <span style="font-size: 1.25rem; color: ${npcStatsDisplayConfig.common.color}; text-align: right;">(<span id="${r}Drops">${drops[r]}</span>)</span>
+            `;
+        }).join("");
+    }
+
     // Create the button and the statistics container. Add event listeners to enable window dragging and include a functional close button.
     function createStatisticsWindow() {
         const desktopContainer = document.getElementById('desktop-container');
@@ -137,33 +187,24 @@
         statsWindow.classList.add('window', 'svelte-1hjm43z');
         statsWindow.style.cssText = 'display: none; z-index: 99; left: 714.5px; top: 356px;';
         statsWindow.innerHTML = `
-        <div class="window-title svelte-1hjm43z" style="user-select: none;">
-            <img draggable="false" class="icon icon-in-text" src="${statsLogo}" alt="Statistics"> Statistics 
-            <button class="window-close svelte-1hjm43z" id="closeStats">
-                <img draggable="false" class="icon" src="https://s0urce.io/icons/close.svg" alt="Close Icon">
-            </button>
-        </div>
-        <div class="window-content svelte-1hjm43z" style="padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
-            <div style="padding: 0.5rem 1rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; align-self: stretch; gap: 2rem; border-radius: 0.25rem; background-color: #212121;">
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <h2 style="font-size: 2rem; font-weight: 700"> NPC Drop Rate</h2>
-                    <p style="font-size: 1.25rem; font-weight: 600;">Statistics for <span id="hackedNpcCount">${hackedNpcCount}</span> NPCs</p>
-                </div>
-                <div style="display: flex; justify-content: center; align-items: center; gap: 2rem">
-                    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem;">
-                        <p style="font-size: 1.25rem; font-weight: 700;"><span id="commonRate">${rates.common}</span>% (<span id="commonDrops">${drops.common}</span>) - <span style="color: #9DA6B3">Common</span></p>
-                        <p style="font-size: 1.25rem; font-weight: 700;"><span id="uncommonRate">${rates.uncommon}</span>% (<span id="uncommonDrops">${drops.uncommon}</span>) - <span style="color: #98BE2E">Uncommon</span></p>
-                        <p style="font-size: 1.25rem; font-weight: 700;"><span id="rareRate">${rates.rare}</span>% (<span id="rareDrops">${drops.rare}</span>) - <span style="color: #0092ED">Rare</span></p>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem;">
-                        <p style="font-size: 1.25rem; font-weight: 700;"><span id="epicRate">${rates.epic}</span>% (<span id="epicDrops">${drops.epic}</span>) - <span style="color: #C92F7A">Epic</span></p>
-                        <p style="font-size: 1.25rem; font-weight: 700;"><span id="legendaryRate">${rates.legendary}</span>% (<span id="legendaryDrops">${drops.legendary}</span>) - <span style="color: #F49824">Legendary</span></p>
-                        <p style="font-size: 1.25rem; font-weight: 700;"><span id="mythicRate">${rates.mythic}</span>% (<span id="mythicDrops">${drops.mythic}</span>) - <span style="background: linear-gradient(60deg, #4ed0ff 0%, #9cf7ff 50%, #4ed0ff 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Mythic</span></p>
-                    </div>
-                </div>
-            </div>
-            <h3 style="font-size: 1.25rem; font-weight: 700;">more soon ...</h3>
-        </div>`;
+                                <div class="window-title svelte-1hjm43z" style="user-select: none;">
+                                    <img draggable="false" class="icon icon-in-text" src="${statsLogo}" alt="Statistics"> Statistics 
+                                    <button class="window-close svelte-1hjm43z" id="closeStats">
+                                        <img draggable="false" class="icon" src="https://s0urce.io/icons/close.svg" alt="Close Icon">
+                                    </button>
+                                </div>
+                                <div class="window-content svelte-1hjm43z" style="padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem;">
+                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 1.25rem; padding: 1rem 1.25rem; border-radius: 0.5rem; background-color: #1a1a1a; border: 1px solid #2e2e2e;">
+                                        <div style="text-align: center;">
+                                            <h2 style="font-size: 2rem; font-weight: 700; margin: 0;">NPC Drop Rate</h2>
+                                            <p style="font-size: 1.25rem; color: ${npcStatsDisplayConfig.common.color}; margin: 0.250rem 0 0;">Statistics for <span id="hackedNpcCount">${hackedNpcCount}</span> NPCs</p>
+                                        </div>
+                                        <div style="display: grid; grid-template-columns: auto auto 1fr auto auto; align-items: center; column-gap: 0.75rem; row-gap: 0.5rem;">
+                                            ${insertNpcRateRows()}
+                                        </div>
+                                    </div>
+                                    <h3 style="font-size: 1.25rem; font-weight: 700; text-align: center; margin: 0; color: ${npcStatsDisplayConfig.common.color};">more soon ...</h3>
+                                </div>`;
 
         document.querySelector('main').appendChild(statsWindow);
 
