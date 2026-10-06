@@ -2,11 +2,10 @@
 
 - Daily BTC Changes (supports Alt Accounts use)
 - NPC Drop Rates Statistics
-  
+
 
 ##  ➕ Features to add:
 
-- Pie Chart for NPC Drop Rates
 - More statistics (give ideas on discord : `_2spi_`)
   
   
