@@ -1,10 +1,13 @@
 // ==UserScript==
 // @name         2spi Core
 // @version      1.0.0
-// @description  Thanks d0t for some variables
+// @description  Credits to d0t for some part of code
 // @author       2spi
 // @match        https://s0urce.io/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=s0urce.io
+// @downloadURL  https://github.com/No0ne-15/2spiCore/raw/refs/heads/main/2spiCore.user.js
+// @updateURL    https://github.com/No0ne-15/2spiCore/raw/refs/heads/main/2spiCore.user.js
+// @grant        none
 // ==/UserScript==
 (function () {
     'use strict';
