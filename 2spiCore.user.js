@@ -155,7 +155,7 @@
                 <div style="width: 0.750rem; height: 0.750rem; border-radius: 50%; background: ${rarity.color}; flex-shrink: 0;"></div>
                 <span style="font-size: 1.25rem; font-weight: 600; color: white; text-align: left">${rarity.name}</span>
                 <div style="position: relative; height: 0.5rem; width: 8rem; background: #2e2e2e; border-radius: 3px; overflow: hidden;">
-                    <div id="${r}Bar" style="position: absolute; left: 0; top: 0; height: 100%; width: ${rates[r]}%; background: ${rarity.color};"></div>
+                    <div id="${r}Bar" style="position: absolute; left: 0; top: 0; height: 100%; width: ${Math.pow(rates[r] / 100, 0.5) * 100}%; background: ${rarity.color};"></div>
                 </div>
                 <span style="font-size: 1.25rem; font-weight: 600; text-align: right;"><span id="${r}Rate">${rates[r]}</span>%</span>
                 <span style="font-size: 1.25rem; color: ${npcStatsDisplayConfig.common.color}; text-align: right;">(<span id="${r}Drops">${drops[r]}</span>)</span>
@@ -291,10 +291,10 @@
         while (document.querySelector("#login-top") || window.location.href !== "https://s0urce.io/")
             await sleep(500);
 
-        createDailyChangeDiv();
         initStatisticsWindow();
         await sleep(500);
-        updateDailyBalance()
+        createDailyChangeDiv();
+        updateDailyBalance();
     })();
     
 })();
